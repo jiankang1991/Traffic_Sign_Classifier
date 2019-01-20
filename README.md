@@ -49,7 +49,7 @@ Below are the distributions of train, val and test dataset:
 
 ### Design and Test a Model Architecture
 
-#### 1. Data Normalization
+#### Data Normalization
 
 I tested several ways of data normalization including transfer images into range of `-0.5` to `0.5`, range of `0` to `1`, zero mean equal standard deviation and grayscale. 
 
@@ -73,7 +73,15 @@ I compared the performances with different methods of data normalization and sho
 
 So I use the method of zero mean and equal standard deviation to normalize the images. 
 
-Then, I saved the model which gets **Validation Accuracy = 0.937** on the validation dataset. 
+### Training hyperparameters
+
+* Batch size: 128
+* Number of epochs trained: 20
+* Type of optimizer: Adam `tf.train.AdamOptimizer`
+* Learning rate: 0.001
+
+
+Then, based on those training hyperparameters, I saved the model which gets **Validation Accuracy = 0.936** on the validation dataset. 
 
 Besides, I tried to exploit the cross entropy loss with weights, which is to deal with the imbalanced dataset. At first I calculate the [median frequence](https://blog.node.us.com/tensorflow-dealing-with-imbalanced-data-eb0108b10701) of each class and use 
 `tf.losses.softmax_cross_entropy` with the corresponding weights according to the classes selected in each batch. Below is the result of LeNet with weighted loss:
@@ -101,12 +109,19 @@ Based on the saved LeNet model, the inference results are displayed as:
 
 *Classified result based on the trained LeNet model*
 
-It can be seen that 2 out of 5 are correctly classified. 
+It can be seen that 3 out of 5 are correctly classified. 
 
-Further, I demonstrated the top 5 predicted classes of those images as:
+Further, I demonstrated the top 5 predicted classes with the probabilities of those images as:
 ![alt text](./output/prediction_test_image_top5.png)
 
 *Classified result of top 5 classes based on the trained LeNet model*
+
+### Discussion about the performance on the downloaded images
+As we can see that, since the original downloaded images from website are of big size, after resizing to `(32x32x3)`, the symbols inside the sign cannot be seen very clearly in the image, e.g. slippery road. This can be one reason which influences the performance of the network. Another reason is that there is other information such as copyright characters in the orginal images, which can be condisered as noise, and also influence the classification. 
+
+As comparing with the performance of the provided test images, the accuracy of downloaded 5 images is lower than that (`0.6` vs `0.928`). The reason is that the generalizaiton capability of the network on the website images is lower than the test images collected from the same domain as the train and validation images. 
+
+### Feature map demonstration
 
 In order to obtain the intuition that what the network learnt, I got the feature maps of the first Conv2D layer as:
 ![alt text](./output/feature_maps.png)
@@ -171,7 +186,7 @@ My final model (SinNet) consisted of the following layers:
 ### Summary
 1. Combining the different level of features can be helpful for the network classification. 
 2. A linear transformation of input image with 1x1x3x3 Conv2D kernel may learn a proper color space for the classification. 
-3. Data augmentation may further improve the performance of SinNet.
+3. Data augmentation and other training tricks, such as learning rate decay, may further improve the performance of SinNet.
 
 
 
